@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -10,9 +10,16 @@ import logo from '../../assets/logo.png';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import * as S from './styles';
+import { Form } from '@unform/mobile';
+import { FormHandles } from '@unform/core';
 
 const SignUp: React.FC = () => {
   const navigation = useNavigation();
+
+  const formRef = useRef<FormHandles>(null);
+  const handleSubmit = useCallback((data: object) => {
+    console.log(data);
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -31,10 +38,18 @@ const SignUp: React.FC = () => {
               <S.Title>Crie sua conta</S.Title>
             </View>
 
-            <Input name="name" icon="user" placeholder="Nome" />
-            <Input name="email" icon="mail" placeholder="E-mail" />
-            <Input name="password" icon="lock" placeholder="Senha" />
-            <Button onPress={() => console.log()}>Cadastrar</Button>
+            <Form
+              style={{ width: '100%' }}
+              ref={formRef}
+              onSubmit={handleSubmit}
+            >
+              <Input name="name" icon="user" placeholder="Nome" />
+              <Input name="email" icon="mail" placeholder="E-mail" />
+              <Input name="password" icon="lock" placeholder="Senha" />
+              <Button onPress={() => formRef.current?.submitForm()}>
+                Cadastrar
+              </Button>
+            </Form>
           </S.Container>
           <S.BackToLoginButton onPress={() => navigation.goBack()}>
             <Icon name="arrow-left" size={20} color="#F4EDE8" />
