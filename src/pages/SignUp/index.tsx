@@ -1,6 +1,12 @@
 import React, { useCallback, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -20,6 +26,9 @@ const SignUp: React.FC = () => {
   const handleSubmit = useCallback((data: object) => {
     console.log(data);
   }, []);
+
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -43,9 +52,32 @@ const SignUp: React.FC = () => {
               ref={formRef}
               onSubmit={handleSubmit}
             >
-              <Input name="name" icon="user" placeholder="Nome" />
-              <Input name="email" icon="mail" placeholder="E-mail" />
-              <Input name="password" icon="lock" placeholder="Senha" />
+              <Input
+                name="name"
+                icon="user"
+                placeholder="Nome"
+                autoCapitalize="words"
+                returnKeyType="next"
+                onSubmitEditing={() => emailRef.current?.focus()}
+              />
+              <Input
+                ref={emailRef}
+                name="email"
+                icon="mail"
+                placeholder="E-mail"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current?.focus()}
+              />
+              <Input
+                ref={passwordRef}
+                name="password"
+                icon="lock"
+                placeholder="Senha"
+                returnKeyType="send"
+                onSubmitEditing={() => formRef.current?.submitForm()}
+              />
               <Button onPress={() => formRef.current?.submitForm()}>
                 Cadastrar
               </Button>

@@ -1,6 +1,12 @@
 import React, { useCallback, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather';
@@ -20,6 +26,8 @@ const SignIn: React.FC = () => {
   }, []);
 
   const formRef = useRef<FormHandles>(null);
+
+  const passwordInputRef = useRef<TextInput>(null);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -43,8 +51,27 @@ const SignIn: React.FC = () => {
               ref={formRef}
               onSubmit={handleSubmit}
             >
-              <Input name="email" icon="mail" placeholder="E-mail" />
-              <Input name="password" icon="lock" placeholder="Senha" />
+              <Input
+                autoCorrect={false}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                name="email"
+                icon="mail"
+                placeholder="E-mail"
+                returnKeyType="next"
+                onSubmitEditing={() => {
+                  passwordInputRef.current?.focus();
+                }}
+              />
+              <Input
+                ref={passwordInputRef}
+                name="password"
+                icon="lock"
+                placeholder="Senha"
+                secureTextEntry
+                returnKeyType="send"
+                onSubmitEditing={() => formRef.current?.submitForm()}
+              />
               <Button onPress={() => formRef.current?.submitForm()}>
                 Entrar
               </Button>
