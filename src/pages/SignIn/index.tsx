@@ -12,22 +12,46 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+import * as Yup from 'yup';
 
+import getValidationErrors from '../../utils/getValidationErros';
 import logo from '../../assets/logo.png';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import * as S from './styles';
 
+interface SignInFormData {
+  email: string;
+  password: string;
+}
+
 const SignIn: React.FC = () => {
   const navigation = useNavigation();
-
-  const handleSubmit = useCallback((data: object) => {
-    console.log(data);
-  }, []);
 
   const formRef = useRef<FormHandles>(null);
 
   const passwordInputRef = useRef<TextInput>(null);
+
+  const handleSubmit = useCallback(async (data: SignInFormData) => {
+    formRef.current?.setErrors({});
+    try {
+      const schema = Yup.object().shape({
+        email: Yup.string()
+          .required('E-mail obrigatório')
+          .email('Digite um e-mail válido'),
+        password: Yup.string().required('Senha obrigatória'),
+      });
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      const errs = getValidationErrors(err);
+      formRef.current?.setErrors(errs);
+
+      console.log(errs);
+    }
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

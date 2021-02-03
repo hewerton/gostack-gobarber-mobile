@@ -74,12 +74,13 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   }));
 
   return (
-    <S.Container isFocused={isFocused}>
+    <S.Container isFocused={isFocused} isErrored={!!error}>
       <S.Icon
         name={icon}
         size={20}
         isFocused={isFocused}
         isFilled={isBlurred}
+        isErrored={!!error}
       />
       <S.TextInput
         ref={inputElementRef}
@@ -87,6 +88,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
         placeholderTextColor="#666360"
         onChangeText={value => {
           inputValueRef.current.value = value;
+          clearError();
         }}
         defaultValue={defaultValue}
         onFocus={handleFocus}
