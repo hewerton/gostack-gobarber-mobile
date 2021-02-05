@@ -6,12 +6,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   TextInput,
+  Alert,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/Feather';
 import * as Yup from 'yup';
+import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErros';
 import logo from '../../assets/logo.png';
@@ -40,10 +42,22 @@ const SignUp: React.FC = () => {
       await schema.validate(data, {
         abortEarly: false,
       });
+
+      const res = await api.post('/users', data);
     } catch (err) {
-      const errors = getValidationErrors(err);
-      formRef.current?.setErrors(errors);
-      console.log(err.errors);
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+        formRef.current?.setErrors(errors);
+        console.log(err.errors);
+
+        Alert.alert(
+          'Erro ao realizar o cadastro',
+          'Ocorreu um erro ao realizar o cadastro, verifique as informações fornecidas e tente novamente.',
+        );
+      } else {
+        Alert.alert('Erro ao realizar o cadastro', err.response.data.message);
+        console.log(err.response.data);
+      }
     }
   }, []);
 
